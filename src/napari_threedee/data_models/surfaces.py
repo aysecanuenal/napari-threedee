@@ -53,7 +53,11 @@ class N3dSurface(BaseModel):
             for idx, level
             in enumerate(self.data)
         ]
-        return np.concatenate(level_ids)
+        if len(level_ids) == 0:
+            level_ids = np.array([])
+        else:
+            level_ids = np.concatenate(level_ids)
+        return level_ids
 
     def __iter__(self) -> np.ndarray:
         yield from self.data
@@ -72,7 +76,12 @@ class N3dSurfaces(N3dDataModel):
 
     @property
     def points(self) -> np.ndarray:
-        return np.concatenate([surface.points for surface in self.data])
+        points = [surface.points for surface in self.data]
+        if len(points) == 0:
+            points = np.array([])
+        else:
+            points = np.concatenate(points)
+        return points
 
     @property
     def surface_ids(self) -> np.ndarray:
@@ -81,17 +90,23 @@ class N3dSurfaces(N3dDataModel):
             for idx, surface
             in enumerate(self.data)
         ]
-        return np.concatenate(surface_ids)
+        if len(surface_ids) == 0:
+            surface_ids = np.array([])
+        else:
+            surface_ids = np.concatenate(surface_ids)
+        return surface_ids
 
     @property
     def level_ids(self) -> np.ndarray:
-        level_ids = np.concatenate(
-            [
-                surface.level_ids
-                for surface
-                in self.data
-            ]
-        )
+        level_ids = [
+            surface.level_ids
+            for surface
+            in self.data
+        ]
+        if len(level_ids) == 0:
+            level_ids = np.array([])
+        else:
+           level_ids = np.concatenate(level_ids)
         return level_ids
 
     @classmethod
@@ -126,7 +141,7 @@ class N3dSurfaces(N3dDataModel):
             face_color=SURFACE_ID_FEATURES_KEY,
             face_color_cycle=COLOR_CYCLE,
             name='n3d surfaces',
-            ndim=self.points.shape[-1],
+            ndim=3,
         )
         validate_layer(layer)
         return layer
